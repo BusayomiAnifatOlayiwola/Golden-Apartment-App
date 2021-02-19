@@ -6,11 +6,11 @@ const router = express.Router();
 const db = require('../models');
 
 router.get('/signup', (req, res) => {
-  res.render('auth/signup'); // this is a form
+  res.render('resident/signup'); // this is a form
 });
 
 router.get('/login', (req, res) => {
-  res.render('auth/login'); // this is a form
+  res.render('resident/login'); // this is a form
 });
 
 router.get('/logout', (req, res) => {
@@ -25,40 +25,40 @@ router.post('/signup', (req, res) => {
   // we now have access to the user info (req.body);
   // console.log(req.body);
   const { name, age, license, email, username, password } = req.body; // goes and us access to whatever key/value inside of the object (req.body)
-  db.user.findOrCreate({
-    where: { email },
-    defaults: { name, age, license, username, password }
+  db.resident.findOrCreate({
+    where: { username },
+    defaults: { name, age, license, email, password }
   })
-  .then(([user, created]) => {
+  .then(([resident, created]) => {
     if (created) {
       // if created, success and we will redirect back to / page
-      console.log(`${user.name} was created....`);
+      console.log(`${resident.name} was created....`);
       // flash messages
       const successObject = {
         successRedirect: '/',
-        successFlash: `Welcome ${user.name}. Account was created and logging in...`
+        successFlash: `Welcome ${resident.name}. Account was created and logging in...`
       }
       // passport authenicate
       passport.authenticate('local', successObject)(req, res);
     } else {
       // Send back email already exists
-      req.flash('error', 'Email already exists');
-      res.redirect('/auth/signup');
+      req.flash('error', 'Username already exists');
+      res.redirect('/resident/signup');
     }
   })
   .catch(error => {
     console.log('**************Error');
     console.log(error);
-    req.flash('error', 'Either email or password is incorrect. Please try again.');
-    res.redirect('/auth/signup');
+    req.flash('error', 'Either username or password is incorrect. Please try again.');
+    res.redirect('/resident/signup');
   });
 });
 
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/auth/login',
+  failureRedirect: '/resident/login',
   successFlash: 'Welcome back ...',
-  failureFlash: 'Either email or password is incorrect' 
+  failureFlash: 'Either username or password is incorrect' 
 }));
 
 

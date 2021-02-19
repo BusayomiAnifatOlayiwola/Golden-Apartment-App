@@ -44,15 +44,19 @@ app.use((req, res, next) => {
 });
 
 // Controllers
-app.use('/auth', require('./controllers/auth'));
+app.use('/resident', require('./controllers/resident'));
+app.use('/apartment', require('./controllers/apartment'));
+app.use('/review', require('./controllers/review'));
+
+
 
 app.get('/', (req, res) => {
   res.render('index');
 });
 
 app.get('/profile', isLoggedIn, (req, res) => {
-  const { id, name, email } = req.user.get(); 
-  res.render('profile', { id, name, email });
+  const { id, name, username } = req.resident.get(); 
+  res.render('profile', { id, name, username });
 });
 
 const PORT = process.env.PORT || 3000;
